@@ -66,7 +66,50 @@
             line-height: 1.8;
             margin-bottom: 25px;
         }
-
+        .music-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            animation: fadeInDown 0.5s both;
+        }
+        
+        .music-notification span {
+            margin-right: 10px;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        .fadeOut {
+            animation: fadeOutUp 0.5s both;
+        }
+        
+        @keyframes fadeOutUp {
+            from {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+        }
         .photo-frame {
             width: 220px;
             height: 220px;
@@ -226,6 +269,10 @@
     </div>
     
     <!-- Pemutar Musik -->
+     <div class="music-notification" id="musicNotification">
+        <span>🎵</span>
+        <span>Stel musik dulu biar romantis!</span>
+     </div>
     <div class="music-player" id="musicPlayer">
         <div class="music-icon">🎵</div>
         <audio id="bgMusic" loop>
@@ -311,6 +358,26 @@
         bgMusic.addEventListener('ended', function() {
             bgMusic.currentTime = 50;
             bgMusic.play();
+        });
+
+         // Music notification control
+        const musicNotification = document.getElementById('musicNotification');
+        
+        // Hide notification after 5 seconds or when music starts
+        setTimeout(() => {
+            musicNotification.classList.add('fadeOut');
+            setTimeout(() => {
+                musicNotification.style.display = 'none';
+            }, 500);
+        }, 5000);
+
+        // Hide immediately when music starts playing
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.addEventListener('play', () => {
+            musicNotification.classList.add('fadeOut');
+            setTimeout(() => {
+                musicNotification.style.display = 'none';
+            }, 500);
         });
     </script>
 

@@ -228,7 +228,7 @@
     <div class="music-player" id="musicPlayer">
         <div class="music-icon">🎵</div>
         <audio id="bgMusic" loop>
-            <source src="audio/birthday.mp3" type="audio/mpeg">
+            <source src="audio/beabadoobee - Glue Song (Official Music Video).mp3" type="audio/mpeg">
             Browser Anda tidak mendukung elemen audio.
         </audio>
     </div>
@@ -270,13 +270,22 @@
         });
         
         // Pemutar musik
+        // ... (script confetti tetap sama) ...
+
+        // Pemutar musik
         const musicPlayer = document.getElementById('musicPlayer');
         const bgMusic = document.getElementById('bgMusic');
         let isPlaying = false;
         
+        // Set waktu mulai di detik ke-50 (dalam milidetik)
+        bgMusic.addEventListener('loadedmetadata', function() {
+            bgMusic.currentTime = 50; // Mulai dari detik ke-50
+        });
+
         // Auto play musik setelah interaksi pengguna
         document.body.addEventListener('click', function initMusic() {
             if (!isPlaying) {
+                bgMusic.currentTime = 50; // Pastikan mulai dari detik ke-50
                 bgMusic.play();
                 musicPlayer.innerHTML = '<div class="music-icon">🎵</div>';
                 isPlaying = true;
@@ -290,11 +299,20 @@
                 bgMusic.pause();
                 musicPlayer.innerHTML = '<div class="music-icon">🔇</div>';
             } else {
+                bgMusic.currentTime = 50; // Kembali ke detik ke-50 saat diplay
                 bgMusic.play();
                 musicPlayer.innerHTML = '<div class="music-icon">🎵</div>';
             }
             isPlaying = !isPlaying;
         });
+
+        // Saat musik mencapai akhir, kembali ke detik ke-50
+        bgMusic.addEventListener('ended', function() {
+            bgMusic.currentTime = 50;
+            bgMusic.play();
+        });
     </script>
+
+        
 </body>
 </html>

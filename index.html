@@ -203,8 +203,8 @@
         <h1 class="animate__animated animate__bounceIn">Selamat Ulang Tahun Sayangku! ❤️</h1>
         
         <div class="photo-frame">
-            <!-- Ganti dengan foto istri Anda -->
-            <img src="https://imgur.com/a/yuhu-zegFU7h" alt="Foto Istri" class="photo" id="wifePhoto">
+            <!-- Foto dari folder lokal -->
+            <img src="images/wife.jpg" alt="Foto Istri" class="photo" id="wifePhoto">
         </div>
         
         <p>Di hari spesialmu ini, aku ingin mengucapkan...</p>
@@ -227,7 +227,10 @@
     <!-- Pemutar Musik -->
     <div class="music-player" id="musicPlayer">
         <div class="music-icon">🎵</div>
-        <iframe id="ytMusic" width="0" height="0" src="https://www.youtube.com/embed/IHht4aOeW3I?autoplay=1&loop=1&playlist=IHht4aOeW3I" frameborder="0" allow="autoplay"></iframe>
+        <audio id="bgMusic" loop>
+            <source src="audio/birthday.mp3" type="audio/mpeg">
+            Browser Anda tidak mendukung elemen audio.
+        </audio>
     </div>
     
     <script>
@@ -261,23 +264,33 @@
         // Tombol utama
         document.getElementById('mainBtn').addEventListener('click', function() {
             document.getElementById('specialMessage').style.display = 'block';
-            document.getElementById('wifePhoto').src = 'https://i.imgur.com/xyz1234.jpg'; // Ganti dengan foto spesial
+            document.getElementById('wifePhoto').src = 'images/special.jpg'; // Foto spesial dari folder lokal
             this.textContent = '💖 Aku Cinta Kamu 💖';
             createConfetti(); // Extra confetti saat tombol diklik
         });
         
         // Pemutar musik
         const musicPlayer = document.getElementById('musicPlayer');
-        let isPlaying = true; // Auto play saat load
+        const bgMusic = document.getElementById('bgMusic');
+        let isPlaying = false;
         
-        musicPlayer.addEventListener('click', function() {
-            const ytMusic = document.getElementById('ytMusic');
-            
+        // Auto play musik setelah interaksi pengguna
+        document.body.addEventListener('click', function initMusic() {
+            if (!isPlaying) {
+                bgMusic.play();
+                musicPlayer.innerHTML = '<div class="music-icon">🎵</div>';
+                isPlaying = true;
+            }
+            document.body.removeEventListener('click', initMusic);
+        });
+        
+        musicPlayer.addEventListener('click', function(e) {
+            e.stopPropagation();
             if (isPlaying) {
-                ytMusic.src = ytMusic.src.replace('autoplay=1', 'autoplay=0');
+                bgMusic.pause();
                 musicPlayer.innerHTML = '<div class="music-icon">🔇</div>';
             } else {
-                ytMusic.src = ytMusic.src.replace('autoplay=0', 'autoplay=1');
+                bgMusic.play();
                 musicPlayer.innerHTML = '<div class="music-icon">🎵</div>';
             }
             isPlaying = !isPlaying;

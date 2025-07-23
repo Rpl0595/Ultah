@@ -269,12 +269,12 @@
     </div>
     
     <!-- Pemutar Musik -->
-     <div class="music-notification" id="musicNotification">
+    <div class="music-notification" id="musicNotification">
         <span>🎵</span>
-        <span>Stel musik dulu biar romantis!</span>
-     </div>
+        <span>Musik romantis sedang dimainkan...</span>
+    </div>
     <div class="music-player" id="musicPlayer">
-        <div class="music-icon">🎵</div>
+        <div class="music-icon">🔊</div>
         <audio id="bgMusic" loop>
             <source src="audio/beabadoobee - Glue Song (Official Music Video).mp3" type="audio/mpeg">
             Browser Anda tidak mendukung elemen audio.
@@ -312,46 +312,62 @@
         // Tombol utama
         document.getElementById('mainBtn').addEventListener('click', function() {
             document.getElementById('specialMessage').style.display = 'block';
-            document.getElementById('wifePhoto').src = 'image/FB_IMG_1753262462698.jpg'; // Foto spesial dari folder lokal
+            document.getElementById('wifePhoto').src = 'image/FB_IMG_1753262462698.jpg';
             this.textContent = '💖 Aku Cinta Kamu 💖';
-            createConfetti(); // Extra confetti saat tombol diklik
+            createConfetti();
         });
         
-        // Pemutar musik
-        // ... (script confetti tetap sama) ...
-
         // Pemutar musik
         const musicPlayer = document.getElementById('musicPlayer');
         const bgMusic = document.getElementById('bgMusic');
+        const musicNotification = document.getElementById('musicNotification');
         let isPlaying = false;
-        
-        // Set waktu mulai di detik ke-50 (dalam milidetik)
-        bgMusic.addEventListener('loadedmetadata', function() {
-            bgMusic.currentTime = 50; // Mulai dari detik ke-50
-        });
 
-        // Auto play musik setelah interaksi pengguna
-        document.body.addEventListener('click', function initMusic() {
+        // Fungsi untuk memulai musik
+        function startMusic() {
+            bgMusic.currentTime = 50; // Mulai dari detik ke-50
+            bgMusic.play()
+                .then(() => {
+                    isPlaying = true;
+                    musicPlayer.innerHTML = '<div class="music-icon">🔊</div>';
+                    // Sembunyikan notifikasi setelah 3 detik
+                    setTimeout(() => {
+                        musicNotification.classList.add('fadeOut');
+                        setTimeout(() => {
+                            musicNotification.style.display = 'none';
+                        }, 500);
+                    }, 3000);
+                })
+                .catch(error => {
+                    console.error("Autoplay prevented:", error);
+                    // Tampilkan instruksi untuk memulai musik
+                    musicNotification.innerHTML = '<span>🎵</span><span>Klik dimanapun untuk memutar musik</span>';
+                    // Aktifkan musik saat halaman diklik
+                    document.body.addEventListener('click', initMusic, { once: true });
+                });
+        }
+
+        // Fungsi inisialisasi musik
+        function initMusic() {
             if (!isPlaying) {
-                bgMusic.currentTime = 50; // Pastikan mulai dari detik ke-50
-                bgMusic.play();
-                musicPlayer.innerHTML = '<div class="music-icon">🎵</div>';
-                isPlaying = true;
+                bgMusic.currentTime = 50;
+                bgMusic.play()
+                    .then(() => {
+                        isPlaying = true;
+                        musicPlayer.innerHTML = '<div class="music-icon">🔊</div>';
+                        musicNotification.classList.add('fadeOut');
+                        setTimeout(() => {
+                            musicNotification.style.display = 'none';
+                        }, 500);
+                    });
             }
-            document.body.removeEventListener('click', initMusic);
-        });
-        
-        musicPlayer.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (isPlaying) {
-                bgMusic.pause();
-                musicPlayer.innerHTML = '<div class="music-icon">🔇</div>';
-            } else {
-                bgMusic.currentTime = 50; // Kembali ke detik ke-50 saat diplay
-                bgMusic.play();
-                musicPlayer.innerHTML = '<div class="music-icon">🎵</div>';
-            }
-            isPlaying = !isPlaying;
+        }
+
+        // Saat metadata musik siap
+        bgMusic.addEventListener('loadedmetadata', function() {
+            bgMusic.currentTime = 50;
+            // Coba mulai musik otomatis
+            startMusic();
         });
 
         // Saat musik mencapai akhir, kembali ke detik ke-50
@@ -360,27 +376,22 @@
             bgMusic.play();
         });
 
-         // Music notification control
-        const musicNotification = document.getElementById('musicNotification');
-        
-        // Hide notification after 5 seconds or when music starts
-        setTimeout(() => {
-            musicNotification.classList.add('fadeOut');
-            setTimeout(() => {
-                musicNotification.style.display = 'none';
-            }, 500);
-        }, 5000);
-
-        // Hide immediately when music starts playing
-        const bgMusic = document.getElementById('bgMusic');
-        bgMusic.addEventListener('play', () => {
-            musicNotification.classList.add('fadeOut');
-            setTimeout(() => {
-                musicNotification.style.display = 'none';
-            }, 500);
+        // Kontrol pemutar musik
+        musicPlayer.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isPlaying) {
+                bgMusic.pause();
+                musicPlayer.innerHTML = '<div class="music-icon">🔇</div>';
+                isPlaying = false;
+            } else {
+                bgMusic.currentTime = 50;
+                bgMusic.play()
+                    .then(() => {
+                        musicPlayer.innerHTML = '<div class="music-icon">🔊</div>';
+                        isPlaying = true;
+                    });
+            }
         });
     </script>
-
-        
 </body>
 </html>
